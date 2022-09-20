@@ -1,2 +1,9 @@
 [build]
   command = "npm install && npm start"
+  publish = "/views"
+  base = "/"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
