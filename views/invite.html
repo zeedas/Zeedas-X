@@ -1,0 +1,197 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="">
+<!--<![endif]-->
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>ZeedasX Invite</title>
+    <meta name="description" content="ZeedasX Invite">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="https://zeedasv2.netlify.app/favicon.ico">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300&display=swap" rel="stylesheet">
+    <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js'></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <style>
+        .select2-container {
+            width: 100% !important;
+        }
+
+        .select2-dropdown {
+            background-color: #0a1c2b;
+        }
+
+        .select2-selection__rendered {
+            color: #aaa !important;
+            font-size: 14px !important;
+        }
+
+        .select2-selection, .form-control {
+            height: 100% !important;
+            border: 1px solid #ced4da !important;
+            border-radius: .25rem !important;
+            color: #fff !important;
+            background-color: transparent !important;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0a1c2b;
+            padding-bottom: 100px;
+            color: #fff;
+            font-family: 'Nunito Sans';
+            font-style: normal;
+            font-weight: 700;
+            font-size: 16px;
+            margin: 30px 10%;
+        }
+
+        h1, h2 {
+            font-weight: bolder;
+        }
+
+        header .header-main {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1360px;
+            margin: 0 auto;
+            margin-bottom: 100px;
+        }
+
+        header .header-main img {
+            max-height: 28px;
+        }
+
+        .send-button {
+            margin-top: 15px;
+            height: 40px;
+            width: 150px;
+            overflow: hidden;
+            transition: all .2s ease-in-out;
+            background-color: #23B3E8;
+            font-size: 20px;
+        }
+
+        .send-text {
+            display: block;
+            margin-top: 10px;
+            font: 700 12px 'Nunito Sans', sans-serif;
+            letter-spacing: 2px;
+        }
+
+    </style>
+    <div id="wait" style="width:150px;height:100px;position:fixed;top:50%;left:50%;padding:2px;z-index:99999;"><img src='https://zeedasv2.netlify.app/static/media/page-loader.8f91007cedfe75280d7aebb4d3a687a5.svg' width="100" height="100" style="background-color: transparent"/></div>
+    
+    <header>
+        <div class="header-main">
+            <img src="https://zeedas.com/assets/Group%2018.c578b3e0.png" alt="" class="logo">
+        </div>
+    </header>
+    
+    <div class="row">
+        <div class="col-lg-5">
+            <h1>About Us</h1>
+            <p>We have long created a space for like-minds to share ideas, resources, and information so that we become better, Now we are kicking it up a notch by coming together on slack. Join our community to get help, offer help and kick start your journey into tech.</p>
+            <h2>Why Build</h2>
+            <p>“Its the execution that matters, not the idea - Casey Neistat” is a quote we have heard so many times and it’s certainly true.</p>
+            <p>We are a community of solution-oriented builders, focused and constantly breaking boundaries. We work collectively to build multiple projects to completion</p>
+        </div>
+        <div class="col-lg-2"></div>
+        <form id="invite-form" class="col-lg-5" role="form">
+            <h2>Join ZeedasX</h2>
+            <p>you will recieve an invite email, click to join the slack community</p>
+            <br>
+            <div class="form-group">
+                <label>Enter Email</label>
+                <input type="email" class="form-control" id="email" placeholder="dev@zeedas.com" name="email" value="" required>
+            </div>
+            <div class="form-group">
+                <label>Who referred you? (optional)</label>
+                <select id="users" class="form-control">
+                    <option value="" disabled selected>Enter Name</option>
+                </select>
+            </div>
+            <br>
+            <button class="btn btn-primary send-button" id="submit" type="submit" value="Continue">Continue</button>
+        </form>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    <script type="text/javascript">
+        const $wait = $('#wait')
+        const $users = $('#users')
+        $(document).ready(function () {
+            getUsers();
+        });
+
+        document.querySelector('#invite-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            requestInvite()
+        });
+
+
+        let user = {};
+        function getUsers() {
+            $wait.show();
+            $.ajax({
+                url: 'https://zeedas-slack.herokuapp.com/slack/users',
+                type: 'get',
+                success:  ({data}) => {
+                    $wait.hide();
+                    $.each(data, (key, val) => $users.append(`<option value ="${val.id}">${val.name}</option>`));
+                    $users.select2();
+                }
+            });
+        }
+
+        function notification(title, text, type, delay) {
+            return swal({
+                title: title,
+                text: text,
+                icon: type,
+                timer: delay || 10000
+            });
+        }
+
+        function requestInvite() {
+            const email = $('#email').val();
+            const referrer = $('#users').val();
+            if (!email) return notification('Kindly enter a valid email!', '', 'warning');
+
+            $wait.show();
+            $.ajax({
+                url: 'https://zeedas-slack.herokuapp.com/slack/invite',
+                type: 'post',
+                data: {email, referrer},
+                success: ({code, message}) => {
+                    $wait.hide();
+                    if (code === 200)
+                        return notification('Invite sent successfully!', '', 'success');
+                    notification(message, '', 'error');
+                },
+                error: ({responseJSON}) => {
+                    $wait.hide();
+                    notification(responseJSON.message || 'No internet connection!', '', 'error');
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
