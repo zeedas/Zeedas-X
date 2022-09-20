@@ -8,7 +8,7 @@ app.set('view engine', 'html');
 app.use(express.static(__dirname + '/views'));
 
 app.get('/', function (req, res) {
-    res.sendFile('invite.html', {
+    res.sendFile('index.html', {
         root: __dirname + '/views'
     });
 });
